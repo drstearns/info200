@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <link rel="icon" href="page-icon.png?0">
+    <title>Crypto Playground</title>
+    <style>
+        @keyframes working {
+            from, to {opacity: 1;}
+            50% {opacity: 0;}
+        }
+        .working span:nth-of-type(1) {
+            animation: working 500ms infinite;
+        }
+        .working span:nth-of-type(2) {
+            animation: working 500ms infinite 100ms;
+        }
+        .working span:nth-of-type(3) {
+            animation: working 500ms infinite 200ms;
+        }
+        .copied {
+            color: #090;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="jumbotron jumbotron-fluid bg-primary text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-auto">
+                    <img src="page-icon.png" alt="keys icon" class="d-none d-md-inline">
+                </div>
+                <div class="col">
+                    <h1 class="display-4">Crypto Playground</h1>
+                </div>
+            </div>
+        </div>
+    </header>
+    <section class="p-4">
+        <div class="container">
+            <h2>Generate a Key Pair</h2>
+            <p>Asymmetric encryption uses two keys: one that must remain private, and one that can be shared publicly with those
+                who want to send you messages. Generate a new key pair, and then share the public key with your friends! Your private key will remain in memory only in this browser tab.</p>
+
+            <p>
+                <button class="btn btn-primary" id="key-pair-button">
+                    Generate Key Pair
+                    <span class="working d-none">
+                        <span>.</span>
+                        <span>.</span>
+                        <span>.</span>
+                    </span>
+                </button>
+            </p>
+            <div class="form-group">
+                <label for="exported-public-key">Your Public Key <span class="copy-feedback">(click contents to copy)</span></label>
+                <input id="exported-public-key" type="text" class="form-control" placeholder="your public key will appear here" readonly/>
+            </div>
+        </div>
+    </section>
+    <section class="bg-light p-4">
+        <div class="container">
+            <h2>Encrypt a Message for Someone</h2>
+            <p>Enter the recipient's public key below, type a short message, and then encrypt it using that recipient's public key. Only the recipient will be able to decrypt the message.</p>
+            <div class="form-group">
+                <label for="recipient-public-key">Recipient's Public Key</label>
+                <input id="recipient-public-key" type="text" class="form-control" placeholder="paste recipient's public key">
+            </div>
+            <div class="form-group">
+                <label for="message-to-encrypt">Message to Encrypt (140 chars max)</label>
+                <input id="message-to-encrypt" type="text" class="form-control" placeholder="type a short message to encrypt" maxlength="140">
+            </div>
+            <p>
+                <button id="encrypt" class="btn btn-primary" disabled>Encrypt</button>
+            </p>
+            <div class="form-group">
+                <label for="encrypted">Encrypted Message <span class="copy-feedback">(click contents to copy)</span></label>
+                <textarea id="encrypted" class="form-control" rows="5" readonly>encrypted message will show here</textarea>
+            </div>
+        </div>
+    </section>
+    <section class="p-4">
+        <div class="container">
+            <h2>Decrypt a Message Sent to You</h2>
+            <p>Paste the secret message sent to you into the box below and decrypt it using your private key.</p>
+            <p>
+                <input id="message-to-decrypt" type="text" class="form-control" placeholder="paste encrypted message sent to you">
+            </p>
+            <p>
+                <button id="decrypt" class="btn btn-primary" disabled>Decrypt</button>
+            </p>
+            <textarea id="decrypted" class="form-control" readonly rows="2">decrypted message will show here</textarea>
+        </div>
+    </section>
+
+
+    <!-- TextEncoder/Decoder polyfill -->
+    <script src="encoding.js"></script>
+    <script src="index.js"></script>
+</body>
+
+</html>

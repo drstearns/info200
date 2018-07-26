@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash Playground</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="icon" href="page-icon.png">
+
+    <style>
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(359deg);
+                transform: rotate(359deg);
+            }
+        }
+        @keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(359deg);
+                transform: rotate(359deg);
+            }
+        }
+        .spin {
+            -webkit-animation: spin 2s infinite linear;
+            animation: spin 2s infinite linear;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+
+        <h1>Hashing Playground</h1>
+
+        <p>Use the controls below to play around with cryptographic hash functions. This page uses client-side JavaScript implementations of these hash functions, which are naturally slower than native code you might run on a server, but they have the added benefit of being readable by JavaScript developers. Use the links provided to see the source code on GitHub.</p>
+
+        <h2>SHA-256</h2>
+
+        <p>The Secure Hashing Algorithm 2 (SHA-2) was designed by the NSA in 2001, and is commonly used for hashing data. SHA-2 is actually a family of functions that produce hashes of various lengths. The SHA-256 function (used here) produces a hash that is 256 bits long. Enter some data into the boxes below to see what the corresponding hash will be. Change your input data slightly and notice how the hash changes significantly.</p>
+
+        <div class="form-group">
+            <label for="sha2-input">SHA-256 Input</label>
+            <textarea id="sha2-input" rows="3" class="form-control"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="sha2-output">SHA-256 Hash</label>
+            <pre><code id="sha2-output">enter data above</code></pre>
+        </div>
+
+        <p><small>JavaScript SHA-256 implementation by <a href="https://github.com/emn178/js-sha256">emn178/js-sha256</a>.</small></p>
+
+        <h2>bcrypt</h2>
+
+        <p>The SHA-2 family of functions are good for many applications, but they aren't the best choice for hashing user passwords because they are too fast on today's hardware. Although an attacker can't reverse a hash back into a plain-text password, the attacker can perform a brute-force attack by hashing a large list of commonly-used passwords and dictionary words/phrases with each salt value in the stored hashes. If any of the resulting hashes matches the stolen hash, the attacker knows what the input value must have been, and thus is able to crack the password from the hash</p>
+        
+        <p>Although you can't prevent a brute-force attack on stolen hashes, you can slow it down considerably if you use an adaptive hashing algorithm like bcrypt, scrypt, or argon2. These algorithms let you specify a number of rounds, which increase the amount of time the algorithm takes to compute the hash. The idea is that you can increase the number of rounds as computer hardware gets faster, thereby maintaining a roughly-consistent hashing time.</p>
+
+        <p>Use the controls below to try the bcrypt algorithm. Notice how changing the salt value produces a different hash even if the password remains the same. And notice how increasing the number of rounds slows down the calculation of the hash.</p>
+
+
+        <div class="form-group">
+            <label for="bcrypt-input">Bcrypt Input</label>
+            <input type="text" id="bcrypt-input" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="bcrypt-rounds">Number of Rounds</label>
+            <select id="bcrypt-rounds" class="form-control">
+                <option value="10" selected>10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <button id="bcrypt-generate" class="btn btn-primary" disabled="true">
+                Generate Hash
+                <span id="bcrypt-generating" class="glyphicon glyphicon-refresh hidden spin"></span>
+            </button>
+        </div>
+        <div class="form-group">
+            <label for="bcrypt-salt">Random Salt Value</label>
+            <pre><code id="bcrypt-salt">enter data above</code></pre>
+        </div>
+        <div class="form-group">
+            <label for="bcrypt-output">Bcrypt Hash</label>
+            <pre><code id="bcrypt-output">enter data above</code></pre>
+            <p>Hash took <strong><span id="bcrypt-duration">0</span></strong> milliseconds</p>
+        </div>
+        <div class="form-group">
+            <p>The output bcrypt hash above contains the number of rounds, the salt value, and the resulting hash, all in one string. We can then store this in our database as the hashed password. When a user signs-in again, we can then use bcrypt to compare the user's supplied sign-in password with the stored hash. Bcrypt will combine the supplied sign-in password with the stored salt, rehash, and compare the resulting hash with the one stored in the database. If they match, the user supplied the same password as before.</p>
+
+            <p>Enter the same text you entered above and validate that it matches to previously generated hash. Then change it slightly and notice that it no longer matches.</p>
+
+            <label for="bcrypt-compare-input">Bcrypt Compare Input</label>
+            <input type="text" id="bcrypt-compare-input" class="form-control">
+        </div>
+        <div class="form-group">
+            <button id="bcrypt-compare" class="btn btn-primary" disabled="true">
+                Compare Against Previous Hash
+                <span id="bcrypt-comparing" class="glyphicon glyphicon-refresh hidden spin"></span>
+            </button>
+        </div>
+        <div class="form-group">
+            <label for="bcrypt-compare-output">Bcrypt Compare Result</label>
+            <pre><code id="bcrypt-compare-output">enter comparison data above</code></pre>
+            <p>Compare took <strong><span id="bcrypt-compare-duration">0</span></strong> milliseconds</p>
+        </div>
+        
+
+        <p><small>JavaScript bcrypt implementation by <a href="https://github.com/dcodeIO/bcrypt.js">dcodeIO/bcrypt</a>.</small></p>
+
+    </div>
+
+
+    <script src="sha256.min.js"></script>
+    <script src="bcrypt.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
